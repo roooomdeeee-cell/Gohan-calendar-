@@ -116,7 +116,10 @@ getDocs,
 collection
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  
+import {
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // Firebase設定
 const firebaseConfig = {
 apiKey: "AIzaSyAkjXWaJzIxyR9NpyRWMnNgBO-GW3xDnoA",
@@ -210,12 +213,44 @@ calendar.appendChild(div);
 }
 
 // ノート表示
-function openNote(date){
-selectedDate = date;
+async function openNote(date){
+selectedDate=date;
+calendarArea.classList.add("hidden");
+noteArea.classList.remove("hidden");
 document.getElementById("selectedDate")
-.textContent = date;
-noteArea.classList.remove("hidden")
+.textContent=date;
+// 保存済みデータ読み込
+const ref =
+doc(
+db,
+"users",
+currentUser.uid,
+"records",
+date
+);
+const snap =
+await getDoc(ref);
+if(snap.exists()){
+const data=snap.data();
+breakfast.value=data.breakfast || "";
+lunch.value=data.lunch || "";
+dinner.value=data.dinner || "";
+snack.value=data.snack || "";
+weight.value=data.weight || "";
+}else{
+breakfast.value="";
+lunch.value="";
+dinner.value="";
+snack.value="";
+weight.value="";
 }
+}
+
+back.onclick=()=>{
+noteArea.classList.add("hidden");
+calendarArea.classList.remove("hidden");
+showCalendar();
+};
 
 // 保存
 save.onclick=async()=>{
@@ -228,7 +263,10 @@ currentUser.uid,
 selectedDate
 ),
 {
-memo:memo.value,
+breakfast: breakfast.value,
+lunch:lunch.value,
+dinner:dinner.value,
+snack:snack.value,
 weight:Number(weight.value),
 updated:
 new Date()
