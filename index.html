@@ -52,20 +52,29 @@ placeholder="パスワード">
 </button>
 </div>
 <div id="appArea" class="hidden">
-<button id="logout">
-ログアウト
-</button>
+<!-- カレンダー画面 -->
+<div id="calendarArea">
 <h2 id="monthTitle"></h2>
 <div id="calendar"></div>
+</div>
+<!-- ノート画面 -->
 <div id="noteArea" class="hidden">
 <h3 id="selectedDate"></h3>
-<textarea id="memo"
-placeholder="食事メモ"></textarea>
-<input id="weight"
-type="number"
-placeholder="体重 kg">
+<label>朝</label>
+<textarea id="breakfast"></textarea>
+<label>昼</label>
+<textarea id="lunch"></textarea>
+<label>夜</label>
+<textarea id="dinner"></textarea>
+<label>間食</label>
+<textarea id="snack"></textarea>
+<label>体重 kg</label>
+<input id="weight" type="number">
 <button id="save">
 保存
+</button>
+<button id="back">
+戻る
 </button>
 </div>
 </div>
