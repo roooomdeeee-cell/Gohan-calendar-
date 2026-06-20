@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.1</h2>
+<h2>Gohan Calendar V1.2</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -323,6 +323,15 @@ weight.value="";
 
 }
 
+back.onclick=()=>{
+
+noteArea.classList.add("hidden");
+
+calendarArea.classList.remove("hidden");
+
+showCalendar();
+
+};
 // 保存
 save.onclick=async()=>{
 await setDoc(
