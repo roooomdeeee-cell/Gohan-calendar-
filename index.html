@@ -70,6 +70,19 @@ placeholder="体重 kg">
 </div>
 </div>
 <script type="module">
+const loginArea = document.getElementById("loginArea");
+const appArea = document.getElementById("appArea");
+const monthTitle = document.getElementById("monthTitle");
+const calendar = document.getElementById("calendar");
+const noteArea = document.getElementById("noteArea");
+const memo = document.getElementById("memo");
+const weight = document.getElementById("weight");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const save = document.getElementById("save");
+const logout = document.getElementById("logout");
+const login = document.getElementById("login");
+const signup = document.getElementById("signup");
 import { initializeApp } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
@@ -183,12 +196,10 @@ calendar.appendChild(div);
 
 // ノート表示
 function openNote(date){
-selectedDate=date;
-selectedDateText =
-date;
+selectedDate = date;
 document.getElementById("selectedDate")
-.textContent=date
-noteArea.classList.remove("hidden");
+.textContent = date;
+noteArea.classList.remove("hidden")
 }
 
 // 保存
