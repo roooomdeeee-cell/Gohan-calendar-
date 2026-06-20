@@ -52,39 +52,24 @@ placeholder="パスワード">
 </button>
 </div>
 <div id="appArea" class="hidden">
-<!-- カレンダー画面 -->
-<div id="calendarArea">
+<button id="logout">
+ログアウト
+</button>
 <h2 id="monthTitle"></h2>
 <div id="calendar"></div>
-</div>
-<!-- ノート画面 -->
 <div id="noteArea" class="hidden">
 <h3 id="selectedDate"></h3>
-<label>朝</label>
-<textarea id="breakfast"></textarea>
-<label>昼</label>
-<textarea id="lunch"></textarea>
-<label>夜</label>
-<textarea id="dinner"></textarea>
-<label>間食</label>
-<textarea id="snack"></textarea>
-<label>体重 kg</label>
-<input id="weight" type="number">
+<textarea id="memo"
+placeholder="食事メモ"></textarea>
+<input id="weight"
+type="number"
+placeholder="体重 kg">
 <button id="save">
 保存
-</button>
-<button id="back">
-戻る
 </button>
 </div>
 </div>
 <script type="module">
-const calendarArea = document.getElementById("calendarArea");
-const breakfast = document.getElementById("breakfast");
-const lunch = document.getElementById("lunch");
-const dinner = document.getElementById("dinner");
-const snack = document.getElementById("snack");
-const back = document.getElementById("back");
 const loginArea = document.getElementById("loginArea");
 const appArea = document.getElementById("appArea");
 const monthTitle = document.getElementById("monthTitle");
@@ -116,10 +101,7 @@ getDocs,
 collection
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-getDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
 // Firebase設定
 const firebaseConfig = {
 apiKey: "AIzaSyAkjXWaJzIxyR9NpyRWMnNgBO-GW3xDnoA",
@@ -190,7 +172,16 @@ div.className="day";
 div.textContent=i;
 
 // 保存済み確認
-if(savedDays.includes(d)){
+const snap =
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"records"
+)
+);
+snap.forEach(x=>{
 if(x.id===d){
 div.textContent=i+" ✅";
 div.classList.add("hasData");
@@ -201,60 +192,15 @@ openNote(d);
 };
 calendar.appendChild(div);
 }
-const snap =
-await getDocs(
-collection(
-db,
-"users",
-currentUser.uid,
-"records"
-)
-);
-let savedDays=[];
-snap.forEach(x=>{
-savedDays.push(x.id);
-});
 }
 
 // ノート表示
-async function openNote(date){
-selectedDate=date;
-calendarArea.classList.add("hidden");
-noteArea.classList.remove("hidden");
+function openNote(date){
+selectedDate = date;
 document.getElementById("selectedDate")
-.textContent=date;
-// 保存済みデータ読み込
-const ref =
-doc(
-db,
-"users",
-currentUser.uid,
-"records",
-date
-);
-const snap =
-await getDoc(ref);
-if(snap.exists()){
-const data=snap.data();
-breakfast.value=data.breakfast || "";
-lunch.value=data.lunch || "";
-dinner.value=data.dinner || "";
-snack.value=data.snack || "";
-weight.value=data.weight || "";
-}else{
-breakfast.value="";
-lunch.value="";
-dinner.value="";
-snack.value="";
-weight.value="";
+.textContent = date;
+noteArea.classList.remove("hidden")
 }
-}
-
-back.onclick=()=>{
-noteArea.classList.add("hidden");
-calendarArea.classList.remove("hidden");
-showCalendar();
-};
 
 // 保存
 save.onclick=async()=>{
@@ -267,10 +213,7 @@ currentUser.uid,
 selectedDate
 ),
 {
-breakfast: breakfast.value,
-lunch:lunch.value,
-dinner:dinner.value,
-snack:snack.value,
+memo:memo.value,
 weight:Number(weight.value),
 updated:
 new Date()
