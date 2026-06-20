@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diet Calendar</title>
+<style>
+body{
+  font-family:sans-serif;
+  margin:20px;
+  text-align:center;
+}
+input, textarea, button{
+  width:90%;
+  padding:12px;
+  margin:6px;
+  font-size:16px;
+}
+textarea{
+  height:120px;
+}
+#calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+.day{
+  border:1px solid #ccc;
+  padding:15px 5px;
+  cursor:pointer;
+}
+.hasData{
+  background:#e8ffe8;
+}
+.hidden{
+  display:none;
+}
+</style>
+</head>
+<body>
+<div id="loginArea">
+<h2>Diet Calendar</h2>
+<input id="email" placeholder="メールアドレス">
+<input id="password" 
+type="password" 
+placeholder="パスワード">
+<button id="login">
+ログイン
+</button>
+<button id="signup">
+新規登録
+</button>
+</div>
+<div id="appArea" class="hidden">
+<button id="logout">
+ログアウト
+</button>
+<h2 id="monthTitle"></h2>
+<div id="calendar"></div>
+<div id="noteArea" class="hidden">
+<h3 id="selectedDate"></h3>
+<textarea id="memo"
+placeholder="食事メモ"></textarea>
+<input id="weight"
+type="number"
+placeholder="体重 kg">
+<button id="save">
+保存
+</button>
+</div>
+</div>
+<script type="module">
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+getFirestore,
+doc,
+setDoc,
+getDocs,
+collection
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+// Firebase設定
+const firebaseConfig = {
+apiKey: "AIzaSyAkjXWaJzIxyR9NpyRWMnNgBO-GW3xDnoA",
+authDomain: "diet-calendar-9bda7.firebaseapp.com",
+projectId: "diet-calendar-9bda7",
+storageBucket: "diet-calendar-9bda7.firebasestorage.app",
+messagingSenderId:"1062223846338",
+appId:"1:1062223846338:web:65ac212970cc4314ca545b"
+};
+const app = initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+let currentUser=null;
+let selectedDate="";
+
+// ログイン状態確認
+onAuthStateChanged(auth,(user)=>{
+if(user){
+currentUser=user;
+loginArea.classList.add("hidden");
+appArea.classList.remove("hidden");
+showCalendar();
+}else{
+loginArea.classList.remove("hidden");
+appArea.classList.add("hidden");
+}
+});
+
+// 新規登録
+signup.onclick=async()=>{
+await createUserWithEmailAndPassword(
+auth,
+email.value,
+password.value
+)
+alert("登録しました");
+};
+
+// ログイン
+login.onclick=async()=>{
+await signInWithEmailAndPassword(
+auth,
+email.value,
+password.value
+)
+};
+
+// ログアウト
+logout.onclick=()=>{
+signOut(auth);
+};
+
+// カレンダー作成
+async function showCalendar(){
+const now=new Date();
+const year=now.getFullYear();
+const month=now.getMonth();
+monthTitle.textContent=
+`${year}年${month+1}月`;
+calendar.innerHTML="";
+const days=
+new Date(year,month+1,0).getDate();
+for(let i=1;i<=days;i++){
+let d=
+`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
+let div=document.createElement("div");
+div.className="day";
+div.textContent=i;
+
+// 保存済み確認
+const snap =
+await getDocs(
+collection(
+db,
+"users",
+currentUser.uid,
+"records"
+)
+);
+snap.forEach(x=>{
+if(x.id===d){
+div.textContent=i+" ✅";
+div.classList.add("hasData");
+}
+});
+div.onclick=()=>{
+openNote(d);
+};
+calendar.appendChild(div);
+}
+}
+
+// ノート表示
+function openNote(date){
+selectedDate=date;
+selectedDateText =
+date;
+document.getElementById("selectedDate")
+.textContent=date
+noteArea.classList.remove("hidden");
+}
+
+// 保存
+save.onclick=async()=>{
+await setDoc(
+doc(
+db,
+"users",
+currentUser.uid,
+"records",
+selectedDate
+),
+{
+memo:memo.value,
+weight:Number(weight.value),
+updated:
+new Date()
+}
+);
+alert("保存しました");
+showCalendar();
+};
+</script>
+</body>
+</html>
