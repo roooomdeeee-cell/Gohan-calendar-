@@ -367,8 +367,6 @@ noteArea.classList.add("hidden");
 
 calendarArea.classList.remove("hidden");
 
-showCalendar();
-
 };
 // 保存
 save.onclick=async()=>{
@@ -396,6 +394,9 @@ updated:new Date()
 }
 );
 alert("保存しました");
+calendarArea.classList.remove("hidden");
+
+noteArea.classList.add("hidden");
 showCalendar();
 };
 </script>
