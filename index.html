@@ -58,76 +58,36 @@ placeholder="パスワード">
 ログアウト
 </button>
 <h2 id="monthTitle"></h2>
-
 <div id="calendar"></div>
-
 </div>
-
 <!-- ノート画面 -->
-
 <div id="noteArea" class="hidden">
-
 <h3 id="selectedDate"></h3>
-
 <label>朝</label>
-
 <textarea id="breakfast"></textarea>
-
 <label>昼</label>
-
 <textarea id="lunch"></textarea>
-
 <label>夜</label>
-
 <textarea id="dinner"></textarea>
-
 <label>間食</label>
-
 <textarea id="snack"></textarea>
-
 <label>体重 kg</label>
-
 <input id="weight" type="number">
-
 <button id="save">
-
 保存
-
 </button>
-
 <button id="back">
-
 戻る
-
 </button>
-
 </div>
-
 </div>
 <script type="module">
-const calendarArea =
-
-document.getElementById("calendarArea");
-
-const breakfast =
-
-document.getElementById("breakfast");
-
-const lunch =
-
-document.getElementById("lunch");
-
-const dinner =
-
-document.getElementById("dinner");
-
-const snack =
-
-document.getElementById("snack");
-
-const back =
-
-document.getElementById("back");
+const calendarArea = document.getElementById("calendarArea");
+const breakfast = document.getElementById("breakfast");
+const lunch = document.getElementById("lunch");
+const dinner = document.getElementById("dinner");
+const snack = document.getElementById("snack");
+const back = document.getElementById("back");
 const loginArea = document.getElementById("loginArea");
 const appArea = document.getElementById("appArea");
 const monthTitle = document.getElementById("monthTitle");
@@ -159,13 +119,8 @@ collection
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
-
 getDoc
-
-} from 
-
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // Firebase設定
 const firebaseConfig = {
 apiKey: "AIzaSyAkjXWaJzIxyR9NpyRWMnNgBO-GW3xDnoA",
@@ -220,153 +175,88 @@ signOut(auth);
 
 // カレンダー作成
 async function showCalendar(){
-
 const now=new Date();
-
 const year=now.getFullYear();
-
 const month=now.getMonth();
-
 monthTitle.textContent =
-
 `${year}年${month+1}月`;
-
 calendar.innerHTML="";
-
+  
 // ★ここで1回だけ取得
-
 const snap =
-
 await getDocs(
-
 collection(
-
 db,
-
 "users",
-
 currentUser.uid,
-
 "records"
-
 )
-
 );
 
 let savedDays=[];
-
 snap.forEach((x)=>{
-
 savedDays.push(x.id);
-
 });
 
 // カレンダー作成
-
 const days =
-
 new Date(year,month+1,0).getDate();
-
 for(let i=1;i<=days;i++){
-
 let d =
-
 `${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
-
 let div=document.createElement("div");
-
 div.className="day";
-
 if(savedDays.includes(d)){
-
 div.textContent=i+" ✅";
-
 div.classList.add("hasData");
-
 }else{
-
 div.textContent=i;
-
 }
-
 div.onclick=()=>{
-
 openNote(d);
-
 };
-
 calendar.appendChild(div);
-
 }
 
 }
 
 // ノート表示
 async function openNote(date){
-
 selectedDate=date;
 breakfast.value="";
-
 lunch.value="";
-
 dinner.value="";
-
 snack.value="";
-
 weight.value="";
 calendarArea.classList.add("hidden");
-
 noteArea.classList.remove("hidden");
-
 document.getElementById("selectedDate")
-
 .textContent=date;
 
 // 保存済みデータ読み込み
-
 const ref =
-
 doc(
-
 db,
-
 "users",
-
 currentUser.uid,
-
 "records",
-
 date
-
 );
 
 const snap =
-
 await getDoc(ref);
-
 if(snap.exists()){
-
 const data=snap.data();
-
 breakfast.value=data.breakfast || "";
-
 lunch.value=data.lunch || "";
-
 dinner.value=data.dinner || "";
-
 snack.value=data.snack || "";
-
 weight.value=data.weight || "";
-
 }
 }
-
 back.onclick=()=>{
-
 noteArea.classList.add("hidden");
-
 calendarArea.classList.remove("hidden");
-
 };
 // 保存
 save.onclick=async()=>{
@@ -381,21 +271,15 @@ selectedDate
 ),
 {
 breakfast: breakfast.value,
-
 lunch:lunch.value,
-
 dinner:dinner.value,
-
 snack:snack.value,
-
 weight:Number(weight.value),
-
 updated:new Date()
 }
 );
 alert("保存しました");
 calendarArea.classList.remove("hidden");
-
 noteArea.classList.add("hidden");
 showCalendar();
 };
