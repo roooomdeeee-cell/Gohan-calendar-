@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.4</h2>
+<h2>Gohan Calendar V1.41</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -376,6 +376,48 @@ showCalendar();
 
 };
 // 保存
+document.getElementById("save").onclick = async()=>{
+
+console.log("保存ボタン押された");
+
+await setDoc(
+
+doc(
+
+db,
+
+"users",
+
+currentUser.uid,
+
+"records",
+
+selectedDate
+
+),
+
+{
+
+breakfast: breakfast.value,
+
+lunch:lunch.value,
+
+dinner:dinner.value,
+
+snack:snack.value,
+
+weight:Number(weight.value),
+
+updated:new Date()
+
+}
+
+);
+
+alert("保存しました");
+
+};
+/*
 save.onclick=async()=>{
 console.log("保存ボタン押された");
 await setDoc(
@@ -403,6 +445,7 @@ updated:new Date()
 alert("保存しました");
 showCalendar();
 };
+*/
 </script>
 </body>
 </html>
