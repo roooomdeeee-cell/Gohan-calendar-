@@ -52,13 +52,11 @@ placeholder="パスワード">
 </button>
 </div>
 <div id="appArea" class="hidden">
+<!-- カレンダー画面 -->
+<div id="calendarArea">
 <button id="logout">
 ログアウト
 </button>
-<!-- カレンダー画面 -->
-
-<div id="calendarArea">
-
 <h2 id="monthTitle"></h2>
 
 <div id="calendar"></div>
@@ -307,7 +305,15 @@ calendar.appendChild(div);
 async function openNote(date){
 
 selectedDate=date;
+breakfast.value="";
 
+lunch.value="";
+
+dinner.value="";
+
+snack.value="";
+
+weight.value="";
 calendarArea.classList.add("hidden");
 
 noteArea.classList.remove("hidden");
@@ -352,20 +358,7 @@ snack.value=data.snack || "";
 
 weight.value=data.weight || "";
 
-}else{
-
-breakfast.value="";
-
-lunch.value="";
-
-dinner.value="";
-
-snack.value="";
-
-weight.value="";
-
 }
-
 }
 
 back.onclick=()=>{
