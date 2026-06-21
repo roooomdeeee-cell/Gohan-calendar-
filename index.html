@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.3</h2>
+<h2>Gohan Calendar V1.4</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -236,16 +236,8 @@ div.className="day";
 div.textContent=i;
 
 // 保存済み確認
-const snap =
-await getDocs(
-collection(
-db,
-"users",
-currentUser.uid,
-"records"
-)
-);
-snap.forEach(x=>{
+
+if(savedDays.includes(d)){
 if(x.id===d){
 div.textContent=i+" ✅";
 div.classList.add("hasData");
@@ -256,6 +248,31 @@ openNote(d);
 };
 calendar.appendChild(div);
 }
+const snap =
+
+await getDocs(
+
+collection(
+
+db,
+
+"users",
+
+currentUser.uid,
+
+"records"
+
+)
+
+);
+
+let savedDays=[];
+
+snap.forEach(x=>{
+
+savedDays.push(x.id);
+
+});
 }
 
 // ノート表示
