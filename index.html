@@ -44,10 +44,20 @@ textarea{
 
 #calendarHeader{
   display:flex;
-  justify-content:space-between;
+  justify-content:center;
   align-items:center;
+  gap:8px;
   margin:10px;
 }
+
+#monthTitle{
+  white-space:nowrap;
+  font-size:22px;
+}
+
+#todayBtn{
+  background:#fff3cd;
+}  
 
 #weekdays,
 #calendar{
@@ -123,6 +133,8 @@ placeholder="パスワード">
 <div id="calendarHeader">
 
 <button id="prevMonth">←</button>
+
+<button id="todayBtn">今日</button>
 
 <h2 id="monthTitle"></h2>
 
@@ -204,7 +216,7 @@ const logout=document.getElementById("logout");
 
 const prevMonth=document.getElementById("prevMonth");
 const nextMonth=document.getElementById("nextMonth");
-
+const todayBtn=document.getElementById("todayBtn");
 
 import {initializeApp}
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -345,7 +357,13 @@ loadingCalendar=false;
 
 };
 
+todayBtn.onclick=()=>{
 
+currentDate=new Date();
+
+showCalendar();
+
+};
 
 async function showCalendar(){
 
