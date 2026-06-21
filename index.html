@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.41</h2>
+<h2>Gohan Calendar V1.42</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -52,6 +52,9 @@ placeholder="パスワード">
 </button>
 </div>
 <div id="appArea" class="hidden">
+<button id="logout">
+ログアウト
+</button>
 <!-- カレンダー画面 -->
 
 <div id="calendarArea">
@@ -132,7 +135,6 @@ const appArea = document.getElementById("appArea");
 const monthTitle = document.getElementById("monthTitle");
 const calendar = document.getElementById("calendar");
 const noteArea = document.getElementById("noteArea");
-const memo = document.getElementById("memo");
 const weight = document.getElementById("weight");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
