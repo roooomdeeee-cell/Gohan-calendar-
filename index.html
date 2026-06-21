@@ -236,18 +236,6 @@ div.className="day";
 div.textContent=i;
 
 // 保存済み確認
-
-if(savedDays.includes(d)){
-if(x.id===d){
-div.textContent=i+" ✅";
-div.classList.add("hasData");
-}
-});
-div.onclick=()=>{
-openNote(d);
-};
-calendar.appendChild(div);
-}
 const snap =
 
 await getDocs(
@@ -263,6 +251,18 @@ currentUser.uid,
 "records"
 
 )
+
+snap.forEach(x=>{
+if(x.id===d){
+div.textContent=i+" ✅";
+div.classList.add("hasData");
+}
+});
+div.onclick=()=>{
+openNote(d);
+};
+calendar.appendChild(div);
+}
 
 );
 
