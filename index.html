@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.3</h2>
+<h2>Gohan Calendar V1.4</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -220,22 +220,21 @@ signOut(auth);
 
 // カレンダー作成
 async function showCalendar(){
-const now=new Date();
-const year=now.getFullYear();
-const month=now.getMonth();
-monthTitle.textContent=
-`${year}年${month+1}月`;
-calendar.innerHTML="";
-const days=
-new Date(year,month+1,0).getDate();
-for(let i=1;i<=days;i++){
-let d=
-`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
-let div=document.createElement("div");
-div.className="day";
-div.textContent=i;
 
-// 保存済み確認
+const now=new Date();
+
+const year=now.getFullYear();
+
+const month=now.getMonth();
+
+monthTitle.textContent =
+
+`${year}年${month+1}月`;
+
+calendar.innerHTML="";
+
+// ★ここで1回だけ取得
+
 const snap =
 
 await getDocs(
@@ -251,18 +250,55 @@ currentUser.uid,
 "records"
 
 )
+
 );
-snap.forEach(x=>{
-if(x.id===d){
-div.textContent=i+" ✅";
-div.classList.add("hasData");
-}
+
+let savedDays=[];
+
+snap.forEach((x)=>{
+
+savedDays.push(x.id);
+
 });
-div.onclick=()=>{
-openNote(d);
-};
-calendar.appendChild(div);
+
+// カレンダー作成
+
+const days =
+
+new Date(year,month+1,0).getDate();
+
+for(let i=1;i<=days;i++){
+
+let d =
+
+`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
+
+let div=document.createElement("div");
+
+div.className="day";
+
+if(savedDays.includes(d)){
+
+div.textContent=i+" ✅";
+
+div.classList.add("hasData");
+
+}else{
+
+div.textContent=i;
+
 }
+
+div.onclick=()=>{
+
+openNote(d);
+
+};
+
+calendar.appendChild(div);
+
+}
+
 }
 
 // ノート表示
