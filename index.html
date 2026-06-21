@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.2</h2>
+<h2>Gohan Calendar V1.3</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -343,10 +343,17 @@ currentUser.uid,
 selectedDate
 ),
 {
-memo:memo.value,
+breakfast: breakfast.value,
+
+lunch:lunch.value,
+
+dinner:dinner.value,
+
+snack:snack.value,
+
 weight:Number(weight.value),
-updated:
-new Date()
+
+updated:new Date()
 }
 );
 alert("保存しました");
