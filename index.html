@@ -39,7 +39,7 @@ textarea{
 </head>
 <body>
 <div id="loginArea">
-<h2>Gohan Calendar V1.4</h2>
+<h2>Gohan Calendar V1.3</h2>
 <input id="email" placeholder="メールアドレス">
 <input id="password" 
 type="password" 
@@ -251,7 +251,7 @@ currentUser.uid,
 "records"
 
 )
-
+);
 snap.forEach(x=>{
 if(x.id===d){
 div.textContent=i+" ✅";
@@ -263,16 +263,6 @@ openNote(d);
 };
 calendar.appendChild(div);
 }
-
-);
-
-let savedDays=[];
-
-snap.forEach(x=>{
-
-savedDays.push(x.id);
-
-});
 }
 
 // ノート表示
