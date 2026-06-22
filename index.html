@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Gohan Calendar V1.4.1</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  margin:20px;
+  text-align:center;
+  background:#fafafa;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+
+h2,h3{
+  margin:15px;
+}
+
+#selectedDate{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:white;
+  padding:12px;
+  margin:0 -15px 15px;
+  border-bottom:1px solid #eee;
+}
+
+input, textarea, button{
+  width:90%;
+  padding:12px;
+  margin:6px;
+  font-size:16px;
+  box-sizing:border-box;
+}
+
+button{
+  border-radius:20px;
+  border:1px solid #ccc;
+  background:white;
+}
+
+textarea{
+  height:90px;
+}
+
+label{
+  display:block;
+  text-align:left;
+  width:90%;
+  margin:14px auto 4px;
+  font-weight:bold;
+}
+
+.hidden{
+  display:none;
+}
+
+#calendarHeader{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin:10px;
+}
+
+#calendarHeader button{
+  width:70px;
+  white-space:nowrap;
+}
+
+#monthTitle{
+  white-space:nowrap;
+  font-size:22px;
+}
+
+#todayBtn{
+  background:#fff3cd;
+}
+
+#weekdays,
+#calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+#weekdays div{
+  font-weight:bold;
+}
+
+.day{
+  height:55px;
+  border:1px solid #ccc;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  background:white;
+  border-radius:8px;
+}
+
+.day .check{
+  position:absolute;
+  bottom:2px;
+  font-size:12px;
+}
+
+.hasData{
+  background:#e8ffe8;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 2px 8px #ddd;
+}
+
+.today{
+  border:3px solid #ff9800;
+}
+
+.mealBlock{
+  width:95%;
+  margin:14px auto;
+  padding:10px;
+  border-radius:15px;
+  background:#fffaf2;
+  border:1px solid #f1dfc2;
+}
+
+.photoInput{
+  display:none;
+}
+
+.photoButtons{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.photoButtons button{
+  width:42%;
+  margin:5px;
+}
+
+.preview{
+  max-width:90%;
+  max-height:180px;
+  border-radius:12px;
+  margin:8px auto;
+  display:block;
+}
+
+.preview.hidden{
+  display:none;
+}
+
+.smallNote{
+  font-size:12px;
+  color:#777;
+  margin:4px;
+}
+
+.topActions{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:8px auto 12px;
+}
+
+.topActions button{
+  width:42%;
+  max-width:180px;
+}
+
+.graphPanel{
+  width:95%;
+  margin:14px auto;
+  padding:12px;
+  border-radius:15px;
+  background:#f7fbff;
+  border:1px solid #dceeff;
+}
+
+#weightChart{
+  width:100%;
+  max-width:680px;
+  height:260px;
+  background:white;
+  border-radius:14px;
+  border:1px solid #e5e5e5;
+  display:block;
+  margin:10px auto;
+}
+
+.statGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  width:95%;
+  margin:10px auto;
+}
+
+.statBox{
+  background:white;
+  border:1px solid #eee;
+  border-radius:14px;
+  padding:10px;
+}
+
+.statBox strong{
+  display:block;
+  font-size:18px;
+  margin-top:4px;
+}
+
+.usageBar{
+  width:95%;
+  height:18px;
+  border-radius:999px;
+  background:#eee;
+  overflow:hidden;
+  margin:8px auto;
+}
+
+#usageFill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#b7f7c8,#ffdd80);
+}
+
+#usageDetails{
+  text-align:left;
+  width:90%;
+  margin:8px auto;
+  line-height:1.6;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div id="loginArea" class="card">
+<h2>Gohan Calendar V1.4.1</h2>
+
+<input id="email" placeholder="メールアドレス">
+
+<input id="password"
+type="password"
+placeholder="パスワード">
+
+<button id="login">ログイン</button>
+<button id="signup">新規登録</button>
+
+</div>
+
+
+<div id="appArea" class="hidden">
+
+
+<div id="calendarArea" class="card">
+
+<button id="logout">ログアウト</button>
+
+<div class="topActions">
+<button id="graphBtn">体重グラフ・容量チェック</button>
+</div>
+
+<div id="calendarHeader">
+
+<button id="prevMonth">←</button>
+
+<button id="todayBtn">今日</button>
+
+<h2 id="monthTitle"></h2>
+
+<button id="nextMonth">→</button>
+
+</div>
+
+
+<div id="weekdays">
+<div>日</div>
+<div>月</div>
+<div>火</div>
+<div>水</div>
+<div>木</div>
+<div>金</div>
+<div>土</div>
+</div>
+
+
+<div id="calendar"></div>
+
+
+</div>
+
+
+
+<div id="noteArea" class="hidden card">
+
+<h3 id="selectedDate"></h3>
+
+<div class="mealBlock">
+<label>朝</label>
+<textarea id="breakfastText" placeholder="朝ごはんメモ"></textarea>
+<input id="breakfastPhotoInput" class="photoInput" type="file" accept="image/*">
+<img id="breakfastPreview" class="preview hidden">
+<div class="photoButtons">
+<button id="breakfastPhotoBtn">写真追加</button>
+<button id="breakfastRemoveBtn">写真削除</button>
+</div>
+</div>
+
+<div class="mealBlock">
+<label>昼</label>
+<textarea id="lunchText" placeholder="昼ごはんメモ"></textarea>
+<input id="lunchPhotoInput" class="photoInput" type="file" accept="image/*">
+<img id="lunchPreview" class="preview hidden">
+<div class="photoButtons">
+<button id="lunchPhotoBtn">写真追加</button>
+<button id="lunchRemoveBtn">写真削除</button>
+</div>
+</div>
+
+<div class="mealBlock">
+<label>夜</label>
+<textarea id="dinnerText" placeholder="夜ごはんメモ"></textarea>
+<input id="dinnerPhotoInput" class="photoInput" type="file" accept="image/*">
+<img id="dinnerPreview" class="preview hidden">
+<div class="photoButtons">
+<button id="dinnerPhotoBtn">写真追加</button>
+<button id="dinnerRemoveBtn">写真削除</button>
+</div>
+</div>
+
+<div class="mealBlock">
+<label>間食</label>
+<textarea id="snackText" placeholder="間食メモ"></textarea>
+<input id="snackPhotoInput" class="photoInput" type="file" accept="image/*">
+<img id="snackPreview" class="preview hidden">
+<div class="photoButtons">
+<button id="snackPhotoBtn">写真追加</button>
+<button id="snackRemoveBtn">写真削除</button>
+</div>
+</div>
+
+<label>体重 kg</label>
+<input id="weight" type="number">
+
+<p class="smallNote">写真は圧縮してFirestoreに保存します。1食1枚まで。</p>
+
+<button id="save">保存</button>
+<button id="back">戻る</button>
+
+
+</div>
+
+
+<div id="graphArea" class="hidden card">
+
+<h3>体重グラフ / Firestore使用量</h3>
+
+<div class="graphPanel">
+<canvas id="weightChart" width="680" height="260"></canvas>
+<p id="graphMessage" class="smallNote">直近90日の体重データを読み込みます。</p>
+</div>
+
+<div class="statGrid">
+<div class="statBox">記録日数<strong id="statDays">-</strong></div>
+<div class="statBox">写真枚数<strong id="statPhotos">-</strong></div>
+<div class="statBox">推定データ量<strong id="statBytes">-</strong></div>
+<div class="statBox">年間予測<strong id="statYear">-</strong></div>
+</div>
+
+<div class="graphPanel">
+<label>Firestore保存容量の推定</label>
+<div class="usageBar"><div id="usageFill"></div></div>
+<div id="usageDetails" class="smallNote"></div>
+</div>
+
+<p class="smallNote">
+※ Firebaseコンソールの正式な使用量ではなく、アプリ内データからのざっくり推定です。
+</p>
+
+<button id="refreshStats">再読み込み</button>
+<button id="graphBack">カレンダーに戻る</button>
+
+</div>
+
+
+</div>
+
+
+<script type="module">
+
+const calendarArea=document.getElementById("calendarArea");
+const noteArea=document.getElementById("noteArea");
+
+const loginArea=document.getElementById("loginArea");
+const appArea=document.getElementById("appArea");
+
+const calendar=document.getElementById("calendar");
+const monthTitle=document.getElementById("monthTitle");
+
+const weight=document.getElementById("weight");
+
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+
+const save=document.getElementById("save");
+const back=document.getElementById("back");
+const login=document.getElementById("login");
+const signup=document.getElementById("signup");
+const logout=document.getElementById("logout");
+
+const prevMonth=document.getElementById("prevMonth");
+const nextMonth=document.getElementById("nextMonth");
+const todayBtn=document.getElementById("todayBtn");
+
+const graphBtn=document.getElementById("graphBtn");
+const graphArea=document.getElementById("graphArea");
+const graphBack=document.getElementById("graphBack");
+const refreshStats=document.getElementById("refreshStats");
+const weightChart=document.getElementById("weightChart");
+const graphMessage=document.getElementById("graphMessage");
+const statDays=document.getElementById("statDays");
+const statPhotos=document.getElementById("statPhotos");
+const statBytes=document.getElementById("statBytes");
+const statYear=document.getElementById("statYear");
+const usageFill=document.getElementById("usageFill");
+const usageDetails=document.getElementById("usageDetails");
+
+const mealKeys=["breakfast","lunch","dinner","snack"];
+
+const meals={};
+
+mealKeys.forEach((key)=>{
+
+meals[key]={
+text:document.getElementById(`${key}Text`),
+photoInput:document.getElementById(`${key}PhotoInput`),
+photoBtn:document.getElementById(`${key}PhotoBtn`),
+removeBtn:document.getElementById(`${key}RemoveBtn`),
+preview:document.getElementById(`${key}Preview`),
+image:""
+};
+
+});
+
+
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc,
+getDocs,
+collection,
+query,
+where,
+documentId,
+deleteDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+const firebaseConfig={
+apiKey:"AIzaSyAkjXWaJzIxyR9NpyRWMnNgBO-GW3xDnoA",
+authDomain:"diet-calendar-9bda7.firebaseapp.com",
+projectId:"diet-calendar-9bda7",
+storageBucket:"diet-calendar-9bda7.firebasestorage.app",
+messagingSenderId:"1062223846338",
+appId:"1:1062223846338:web:65ac212970cc4314ca545b"
+};
+
+
+const app=initializeApp(firebaseConfig);
+
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+
+let currentUser=null;
+let selectedDate="";
+let currentDate=new Date();
+let loadingCalendar=false;
+let savingNote=false;
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+currentUser=user;
+
+loginArea.classList.add("hidden");
+appArea.classList.remove("hidden");
+
+showCalendar();
+
+}else{
+
+loginArea.classList.remove("hidden");
+appArea.classList.add("hidden");
+
+}
+
+});
+
+
+
+signup.onclick=async()=>{
+
+await createUserWithEmailAndPassword(
+auth,
+email.value,
+password.value
+);
+
+alert("登録しました");
+
+};
+
+
+
+login.onclick=async()=>{
+
+await signInWithEmailAndPassword(
+auth,
+email.value,
+password.value
+);
+
+};
+
+
+
+logout.onclick=()=>{
+
+signOut(auth);
+
+};
+
+
+
+
+
+graphBtn.onclick=openGraph;
+
+refreshStats.onclick=renderGraphAndUsage;
+
+graphBack.onclick=()=>{
+
+showOnly(calendarArea);
+
+};
+
+
+
+prevMonth.onclick=async()=>{
+
+if(loadingCalendar)return;
+
+loadingCalendar=true;
+
+currentDate.setMonth(
+currentDate.getMonth()-1
+);
+
+await showCalendar();
+
+loadingCalendar=false;
+
+};
+
+
+
+nextMonth.onclick=async()=>{
+
+if(loadingCalendar)return;
+
+loadingCalendar=true;
+
+currentDate.setMonth(
+currentDate.getMonth()+1
+);
+
+await showCalendar();
+
+loadingCalendar=false;
+
+};
+
+
+
+todayBtn.onclick=async()=>{
+
+if(loadingCalendar)return;
+
+loadingCalendar=true;
+
+currentDate=new Date();
+
+await showCalendar();
+
+loadingCalendar=false;
+
+};
+
+
+
+
+
+function showOnly(area){
+
+calendarArea.classList.add("hidden");
+noteArea.classList.add("hidden");
+graphArea.classList.add("hidden");
+
+area.classList.remove("hidden");
+
+}
+
+
+
+function toDateId(date){
+
+return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+
+}
+
+
+
+function formatBytes(bytes){
+
+if(bytes < 1024) return `${bytes} B`;
+
+const kb=bytes/1024;
+if(kb < 1024) return `${kb.toFixed(1)} KB`;
+
+const mb=kb/1024;
+if(mb < 1024) return `${mb.toFixed(2)} MB`;
+
+return `${(mb/1024).toFixed(2)} GB`;
+
+}
+
+
+
+function getRoughBytes(obj){
+
+return new Blob([JSON.stringify(obj)]).size;
+
+}
+
+
+
+function countPhotos(record){
+
+return mealKeys.reduce((total,key)=>{
+
+return total + (record?.[key]?.image ? 1 : 0);
+
+},0);
+
+}
+
+
+
+function recordHasAnyData(record){
+
+if(record?.weight !== "" && record?.weight !== undefined && record?.weight !== null){
+return true;
+}
+
+return mealKeys.some((key)=>{
+
+const meal=record?.[key];
+
+if(typeof meal === "string"){
+return meal.trim() !== "";
+}
+
+const textValue=meal?.text ? String(meal.text).trim() : "";
+const imageValue=meal?.image || "";
+
+return textValue !== "" || imageValue !== "";
+
+});
+
+}
+
+
+async function loadRecentRecords(days=90){
+
+const end=new Date();
+const start=new Date();
+
+start.setDate(end.getDate()-(days-1));
+
+const startId=toDateId(start);
+const endId=toDateId(end);
+
+const snap=await getDocs(
+query(
+collection(
+db,
+"users",
+currentUser.uid,
+"records"
+),
+where(documentId(),">=",startId),
+where(documentId(),"<=",endId)
+)
+);
+
+const records=[];
+
+snap.forEach((docSnap)=>{
+
+records.push({
+id:docSnap.id,
+data:docSnap.data()
+});
+
+});
+
+records.sort((a,b)=>a.id.localeCompare(b.id));
+
+return {records,startId,endId,days};
+
+}
+
+
+
+function drawWeightChart(entries){
+
+const canvas=weightChart;
+const ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.font="14px sans-serif";
+ctx.fillStyle="#777";
+
+if(entries.length===0){
+
+ctx.fillText("体重データがまだありません",24,42);
+return;
+
+}
+
+const paddingLeft=48;
+const paddingRight=18;
+const paddingTop=24;
+const paddingBottom=38;
+
+const chartW=canvas.width-paddingLeft-paddingRight;
+const chartH=canvas.height-paddingTop-paddingBottom;
+
+const weights=entries.map(x=>x.weight);
+let min=Math.min(...weights);
+let max=Math.max(...weights);
+
+if(min===max){
+min-=1;
+max+=1;
+}else{
+const pad=(max-min)*0.12;
+min-=pad;
+max+=pad;
+}
+
+ctx.strokeStyle="#ddd";
+ctx.lineWidth=1;
+
+for(let i=0;i<=4;i++){
+
+const y=paddingTop + chartH*(i/4);
+ctx.beginPath();
+ctx.moveTo(paddingLeft,y);
+ctx.lineTo(canvas.width-paddingRight,y);
+ctx.stroke();
+
+const label=(max-(max-min)*(i/4)).toFixed(1);
+ctx.fillText(label,8,y+4);
+
+}
+
+ctx.strokeStyle="#333";
+ctx.lineWidth=2;
+ctx.beginPath();
+
+entries.forEach((item,index)=>{
+
+const x=paddingLeft + (entries.length===1 ? chartW/2 : chartW*(index/(entries.length-1)));
+const y=paddingTop + chartH*((max-item.weight)/(max-min));
+
+if(index===0){
+ctx.moveTo(x,y);
+}else{
+ctx.lineTo(x,y);
+}
+
+});
+
+ctx.stroke();
+
+entries.forEach((item,index)=>{
+
+const x=paddingLeft + (entries.length===1 ? chartW/2 : chartW*(index/(entries.length-1)));
+const y=paddingTop + chartH*((max-item.weight)/(max-min));
+
+ctx.beginPath();
+ctx.arc(x,y,4,0,Math.PI*2);
+ctx.fillStyle="#333";
+ctx.fill();
+
+});
+
+ctx.fillStyle="#777";
+ctx.fillText(entries[0].id.slice(5),paddingLeft,canvas.height-12);
+ctx.textAlign="right";
+ctx.fillText(entries[entries.length-1].id.slice(5),canvas.width-paddingRight,canvas.height-12);
+ctx.textAlign="left";
+
+}
+
+
+
+async function renderGraphAndUsage(){
+
+graphMessage.textContent="読み込み中…";
+
+const result=await loadRecentRecords(90);
+const records=result.records;
+const activeRecords=records.filter((x)=>recordHasAnyData(x.data));
+
+const weightEntries=activeRecords
+.map(x=>({id:x.id,weight:Number(x.data.weight)}))
+.filter(x=>Number.isFinite(x.weight) && x.weight>0);
+
+drawWeightChart(weightEntries);
+
+let recordBytes=0;
+let photoCount=0;
+
+records.forEach((x)=>{
+
+recordBytes += getRoughBytes(x.data);
+photoCount += countPhotos(x.data);
+
+});
+
+const estimatedSummaryBytes=records.length * 80;
+const totalBytes=recordBytes + estimatedSummaryBytes;
+const yearEstimate=records.length === 0 ? 0 : Math.round(totalBytes * (365 / result.days));
+
+const freeStorageBytes=1024*1024*1024;
+const usagePercent=Math.min(100,(yearEstimate/freeStorageBytes)*100);
+
+statDays.textContent=`${activeRecords.length}日`;
+statPhotos.textContent=`${photoCount}枚`;
+statBytes.textContent=formatBytes(totalBytes);
+statYear.textContent=formatBytes(yearEstimate);
+
+usageFill.style.width=`${usagePercent}%`;
+
+usageDetails.innerHTML=
+`直近90日: 約 ${formatBytes(totalBytes)}<br>`+
+`このペースの年間予測: 約 ${formatBytes(yearEstimate)} / 1 GiB<br>`+
+`保存1回の目安: records + summaries で2 write<br>`+
+`この画面の再読み込み: 最大約90 read`;
+
+graphMessage.textContent=
+weightEntries.length===0
+? "体重データがまだありません。ノート画面で体重を保存すると線が育ちます。"
+: `直近90日のうち ${weightEntries.length}件の体重を表示中`;
+
+}
+
+
+
+async function openGraph(){
+
+showOnly(graphArea);
+await renderGraphAndUsage();
+
+}
+
+async function showCalendar(){
+
+
+const year=currentDate.getFullYear();
+
+const month=currentDate.getMonth();
+
+
+monthTitle.textContent=
+`${year}年${month+1}月`;
+
+
+calendar.innerHTML="";
+
+
+const monthStart=
+`${year}-${String(month+1).padStart(2,"0")}-01`;
+
+const monthEnd=
+`${year}-${String(month+1).padStart(2,"0")}-31`;
+
+
+// V1.3：カレンダーは summaries だけ読む
+const snap=
+await getDocs(
+query(
+collection(
+db,
+"users",
+currentUser.uid,
+"summaries"
+),
+where(documentId(),">=",monthStart),
+where(documentId(),"<=",monthEnd)
+)
+);
+
+
+let savedDays=[];
+
+
+snap.forEach((x)=>{
+
+const data=x.data();
+
+if(data.hasData === true){
+
+savedDays.push(x.id);
+
+}
+
+});
+
+
+
+const firstDay=
+new Date(year,month,1).getDay();
+
+
+const days=
+new Date(year,month+1,0).getDate();
+
+
+
+for(let i=0;i<firstDay;i++){
+
+const blank=document.createElement("div");
+
+calendar.appendChild(blank);
+
+}
+
+
+
+for(let i=1;i<=days;i++){
+
+
+let d=
+`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
+
+
+let div=document.createElement("div");
+
+div.className="day";
+
+
+const today=new Date();
+
+const todayStr=
+`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+
+
+if(d===todayStr){
+
+div.classList.add("today");
+
+}
+
+
+div.innerHTML=
+`<span>${i}</span>`;
+
+
+if(savedDays.includes(d)){
+
+div.innerHTML+=
+`<span class="check">✅</span>`;
+
+div.classList.add("hasData");
+
+}
+
+
+div.onclick=()=>{
+
+openNote(d);
+
+};
+
+
+calendar.appendChild(div);
+
+
+}
+
+}
+
+
+
+function clearNote(){
+
+mealKeys.forEach((key)=>{
+
+meals[key].text.value="";
+meals[key].image="";
+meals[key].preview.src="";
+meals[key].preview.classList.add("hidden");
+meals[key].preview.style.display="none";
+
+});
+
+weight.value="";
+
+}
+
+
+
+function setMealData(key,data){
+
+const meal=meals[key];
+
+if(typeof data==="string"){
+
+meal.text.value=data;
+meal.image="";
+meal.preview.src="";
+meal.preview.classList.add("hidden");
+meal.preview.style.display="none";
+
+return;
+
+}
+
+meal.text.value=data?.text || "";
+meal.image=data?.image || "";
+
+if(meal.image){
+
+meal.preview.src=meal.image;
+meal.preview.classList.remove("hidden");
+meal.preview.style.display="block";
+
+}else{
+
+meal.preview.src="";
+meal.preview.classList.add("hidden");
+meal.preview.style.display="none";
+
+}
+
+}
+
+
+
+async function openNote(date){
+
+
+selectedDate=date;
+
+clearNote();
+
+
+showOnly(noteArea);
+
+
+document.getElementById("selectedDate")
+.textContent=date;
+
+
+// V1.3：ノート詳細は records の該当日だけ読む
+const snap=
+await getDoc(
+doc(
+db,
+"users",
+currentUser.uid,
+"records",
+date
+)
+);
+
+
+if(snap.exists()){
+
+const data=snap.data();
+
+// 旧データ互換：文字列でも読み込める
+setMealData("breakfast",data.breakfast);
+setMealData("lunch",data.lunch);
+setMealData("dinner",data.dinner);
+setMealData("snack",data.snack);
+
+weight.value=data.weight || "";
+
+}
+
+}
+
+
+
+back.onclick=()=>{
+
+showOnly(calendarArea);
+
+};
+
+
+
+function hasAnyData(){
+
+if(String(weight.value).trim() !== "") return true;
+
+return mealKeys.some((key)=>{
+
+const textValue=meals[key].text.value.trim();
+const imageValue=meals[key].image;
+
+return textValue !== "" || imageValue !== "";
+
+});
+
+}
+
+
+
+save.onclick=async()=>{
+
+if(savingNote)return;
+
+savingNote=true;
+save.disabled=true;
+const originalSaveText=save.textContent;
+save.textContent="保存中…";
+
+try{
+
+const recordData={
+
+breakfast:{
+text:meals.breakfast.text.value,
+image:meals.breakfast.image
+},
+
+lunch:{
+text:meals.lunch.text.value,
+image:meals.lunch.image
+},
+
+dinner:{
+text:meals.dinner.text.value,
+image:meals.dinner.image
+},
+
+snack:{
+text:meals.snack.text.value,
+image:meals.snack.image
+},
+
+weight: weight.value === "" ? "" : Number(weight.value),
+
+updated:new Date()
+
+};
+
+
+// V1.4.1：空ノートなら records / summaries を削除して、日数・容量・read数を増やさない
+const noteHasData=hasAnyData();
+
+if(noteHasData){
+
+await setDoc(
+
+doc(
+db,
+"users",
+currentUser.uid,
+"records",
+selectedDate
+),
+
+recordData
+
+);
+
+await setDoc(
+
+doc(
+db,
+"users",
+currentUser.uid,
+"summaries",
+selectedDate
+),
+
+{
+hasData:true,
+updated:new Date()
+}
+
+);
+
+}else{
+
+await deleteDoc(
+doc(
+db,
+"users",
+currentUser.uid,
+"records",
+selectedDate
+)
+);
+
+await deleteDoc(
+doc(
+db,
+"users",
+currentUser.uid,
+"summaries",
+selectedDate
+)
+);
+
+}
+
+alert("保存しました");
+
+showOnly(calendarArea);
+
+await showCalendar();
+
+}catch(error){
+
+console.error(error);
+alert("保存に失敗しました: " + error.message);
+
+}finally{
+
+savingNote=false;
+save.disabled=false;
+save.textContent=originalSaveText;
+
+}
+
+};
+
+async function compressImage(file,maxWidth=900,quality=0.55){
+
+return new Promise((resolve,reject)=>{
+
+const reader=new FileReader();
+
+reader.onload=(e)=>{
+
+const img=new Image();
+
+img.onload=()=>{
+
+let width=img.width;
+let height=img.height;
+
+if(width>maxWidth){
+
+height=Math.round(height*maxWidth/width);
+width=maxWidth;
+
+}
+
+const canvas=document.createElement("canvas");
+
+canvas.width=width;
+canvas.height=height;
+
+const ctx=canvas.getContext("2d");
+
+ctx.drawImage(img,0,0,width,height);
+
+const dataUrl=canvas.toDataURL("image/jpeg",quality);
+
+resolve(dataUrl);
+
+};
+
+img.onerror=reject;
+
+img.src=e.target.result;
+
+};
+
+reader.onerror=reject;
+
+reader.readAsDataURL(file);
+
+});
+
+}
+
+
+
+mealKeys.forEach((key)=>{
+
+const meal=meals[key];
+
+meal.photoBtn.onclick=()=>{
+
+meal.photoInput.click();
+
+};
+
+
+meal.photoInput.onchange=async()=>{
+
+const file=meal.photoInput.files[0];
+
+if(!file)return;
+
+const compressed=await compressImage(file);
+
+meal.image=compressed;
+meal.preview.src=compressed;
+meal.preview.classList.remove("hidden");
+meal.preview.style.display="block";
+
+meal.photoInput.value="";
+
+};
+
+
+meal.removeBtn.onclick=()=>{
+
+meal.image="";
+meal.preview.src="";
+meal.preview.classList.add("hidden");
+meal.preview.style.display="none";
+meal.preview.style.display="none";
+
+// iPhone Safariの再描画を促す
+meal.preview.offsetHeight;
+
+};
+
+});
+
+
+</script>
+
+</body>
+</html>
